@@ -21,13 +21,20 @@ class ProjectController extends Controller
         DB::listen(function ($query) {
             Log::info($query->toRawSql() . " | {$query->time} ms");
         });
-        
+
         $query = Project::query()->with(['createdBy', 'updatedBy']);
+        if (request("name")) {
+            $query->where('name', 'like', "%" . request('name') . "%");
+        }
+        if (request("status")) {
+            $query->where('status', request('status'));
+        }
 
         $project = $query->paginate(10)->onEachSide(1);
 
         return inertia("Project/Index", [
             'projects' => ProjectResource::collection($project),
+            'queryParams' => request()->query() ?: null,
         ]);
     }
 
