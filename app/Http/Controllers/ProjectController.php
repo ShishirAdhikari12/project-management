@@ -4,7 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreProjectRequest;
 use App\Http\Requests\UpdateProjectRequest;
+use App\Http\Resources\ProjectResource;
 use App\Models\Project;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+
+use function Termwind\render;
 
 class ProjectController extends Controller
 {
@@ -13,7 +18,17 @@ class ProjectController extends Controller
      */
     public function index()
     {
-        //
+        DB::listen(function ($query) {
+            Log::info($query->toRawSql() . " | {$query->time} ms");
+        });
+        
+        $query = Project::query()->with(['createdBy', 'updatedBy']);
+
+        $project = $query->paginate(10)->onEachSide(1);
+
+        return inertia("Project/Index", [
+            'projects' => ProjectResource::collection($project),
+        ]);
     }
 
     /**
