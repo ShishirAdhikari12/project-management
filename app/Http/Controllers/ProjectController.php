@@ -6,8 +6,8 @@ use App\Http\Requests\StoreProjectRequest;
 use App\Http\Requests\UpdateProjectRequest;
 use App\Http\Resources\ProjectResource;
 use App\Models\Project;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
+// use Illuminate\Support\Facades\DB;
+// use Illuminate\Support\Facades\Log;
 
 use function Termwind\render;
 
@@ -18,11 +18,15 @@ class ProjectController extends Controller
      */
     public function index()
     {
-        DB::listen(function ($query) {
-            Log::info($query->toRawSql() . " | {$query->time} ms");
-        });
+        // DB::listen(function ($query) {
+        //     Log::info($query->toRawSql() . " | {$query->time} ms");
+        // });
+
+        $sortField = request("sort_field", "created_at");
+        $sortDirection = request("sort_direction", "desc");
 
         $query = Project::query()->with(['createdBy', 'updatedBy']);
+
         if (request("name")) {
             $query->where('name', 'like', "%" . request('name') . "%");
         }
@@ -30,7 +34,9 @@ class ProjectController extends Controller
             $query->where('status', request('status'));
         }
 
-        $project = $query->paginate(10)->onEachSide(1);
+        $project = $query->orderBy($sortField, $sortDirection)
+            ->paginate(10)
+            ->onEachSide(1);
 
         return inertia("Project/Index", [
             'projects' => ProjectResource::collection($project),
