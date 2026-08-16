@@ -181,7 +181,7 @@ export default function Index({ projects, queryParams = null }) {
                   </tbody>
                 </table>
               </div>
-              <Pagination links={projects.meta.links} />
+              <Pagination links={projects.meta.links} queryParams={queryParams} />
             </div>
           </div>
         </div>
