@@ -6,8 +6,8 @@ use App\Http\Requests\StoreProjectRequest;
 use App\Http\Requests\UpdateProjectRequest;
 use App\Http\Resources\ProjectResource;
 use App\Models\Project;
-// use Illuminate\Support\Facades\DB;
-// use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 use function Termwind\render;
 
@@ -65,7 +65,13 @@ class ProjectController extends Controller
      */
     public function show(Project $project)
     {
-        //
+        DB::listen(function ($query) {
+            Log::info($query->toRawSql() . " | {$query->time} ms");
+        });
+        
+        return inertia("Project/Show", [
+            'project' => new ProjectResource($project),
+        ]);
     }
 
     /**
