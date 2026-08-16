@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreProjectRequest;
 use App\Http\Requests\UpdateProjectRequest;
 use App\Http\Resources\ProjectResource;
+use App\Http\Resources\TaskResource;
 use App\Models\Project;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -68,9 +69,33 @@ class ProjectController extends Controller
         DB::listen(function ($query) {
             Log::info($query->toRawSql() . " | {$query->time} ms");
         });
-        
+
+        $sortField = request("sort_field", "created_at");
+        $sortDirection = request("sort_direction", "desc");
+
+        $query = $project->tasks()->with([
+            'createdBy',
+            'updatedBy',
+            'assignedUser',
+            'project',
+            'project.createdBy',
+            "project.updatedBy",
+        ]);
+        if (request("name")) {
+            $query->where('name', 'like', "%" . request('name') . "%");
+        }
+        if (request("status")) {
+            $query->where('status', request('status'));
+        }
+
+        $tasks = $query->orderBy($sortField, $sortDirection)
+            ->paginate(20)
+            ->onEachSide(1);
+
         return inertia("Project/Show", [
             'project' => new ProjectResource($project),
+            'tasks' => TaskResource::collection($tasks),
+            'queryParams' => request()->query() ?: null,
         ]);
     }
 
