@@ -7,8 +7,11 @@ use App\Http\Requests\UpdateProjectRequest;
 use App\Http\Resources\ProjectResource;
 use App\Http\Resources\TaskResource;
 use App\Models\Project;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
+use Illuminate\Http\UploadedFile;
+// use Illuminate\Support\Facades\DB;
+// use Illuminate\Support\Facades\Log;
 
 use function Termwind\render;
 
@@ -42,6 +45,7 @@ class ProjectController extends Controller
         return inertia("Project/Index", [
             'projects' => ProjectResource::collection($project),
             'queryParams' => request()->query() ?: null,
+            'success' => session('success'),
         ]);
     }
 
@@ -50,7 +54,7 @@ class ProjectController extends Controller
      */
     public function create()
     {
-        //
+        return inertia('Project/Create');
     }
 
     /**
@@ -58,7 +62,21 @@ class ProjectController extends Controller
      */
     public function store(StoreProjectRequest $request)
     {
-        //
+        $data = $request->validated();
+        /** @var UploadedFile|null $image */
+        $image = $data['image'] ?? null;
+
+        $data["created_by"] = Auth::id();
+        $data["updated_by"] = Auth::id();
+
+        if($image){
+            $data['image_path'] = $image->store('project/' . Str::random(10), 'public');
+        }
+
+        Project::create($data);
+
+        return to_route('project.index')
+            ->with('success', 'Project was created');
     }
 
     /**
@@ -66,9 +84,9 @@ class ProjectController extends Controller
      */
     public function show(Project $project)
     {
-        DB::listen(function ($query) {
-            Log::info($query->toRawSql() . " | {$query->time} ms");
-        });
+        // DB::listen(function ($query) {
+        //     Log::info($query->toRawSql() . " | {$query->time} ms");
+        // });
 
         $sortField = request("sort_field", "created_at");
         $sortDirection = request("sort_direction", "desc");

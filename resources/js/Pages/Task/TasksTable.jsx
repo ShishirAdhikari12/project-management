@@ -130,6 +130,7 @@ const TasksTable = ({ tasks, queryParams = null, hideProjectColumn = false }) =>
                   <img
                     src={task.image_path}
                     style={{ width: 80 }}
+                    className="min-w-20"
                     alt="task image"
                   />
                 </td>
@@ -138,8 +139,8 @@ const TasksTable = ({ tasks, queryParams = null, hideProjectColumn = false }) =>
                 >
                   <Link
                     href={route('project.show', task.project.id)}
-                    // title={task.project.name}
-                    // className="block max-w-32 truncate hover:underline hover:text-black dark:hover:text-white"
+                  // title={task.project.name}
+                  // className="block max-w-32 truncate hover:underline hover:text-black dark:hover:text-white"
                   >{task.project.name}</Link>
                 </td>}
                 <td className="px-3 py-2">{task.name}</td>
