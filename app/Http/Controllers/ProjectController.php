@@ -10,6 +10,8 @@ use App\Models\Project;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
+
 // use Illuminate\Support\Facades\DB;
 // use Illuminate\Support\Facades\Log;
 
@@ -69,10 +71,10 @@ class ProjectController extends Controller
         $data["created_by"] = Auth::id();
         $data["updated_by"] = Auth::id();
 
-        if($image){
+        if ($image) {
             $data['image_path'] = $image->store('project/' . Str::random(10), 'public');
         }
-
+        unset($data['image']);
         Project::create($data);
 
         return to_route('project.index')
@@ -122,7 +124,9 @@ class ProjectController extends Controller
      */
     public function edit(Project $project)
     {
-        //
+        return inertia('Project/Edit', [
+            'project' => new ProjectResource($project),
+        ]);
     }
 
     /**
@@ -130,7 +134,23 @@ class ProjectController extends Controller
      */
     public function update(UpdateProjectRequest $request, Project $project)
     {
-        //
+        $data = $request->validated();
+        /** @var UploadedFile|null $image */
+        $image = $data['image'] ?? null;
+
+        if ($image instanceof UploadedFile) {
+            if ($project->image_path) {
+                Storage::disk('public')->deleteDirectory(dirname($project->image_path));
+            }
+            $data['image_path'] = $image->store('project/' . Str::random(10), 'public');
+        }
+
+        unset($data['image']);
+        $data['updated_by'] = Auth::id();
+        $project->update($data);
+
+        return to_route('project.index')
+            ->with('success', 'Project is Updated');
     }
 
     /**
@@ -138,6 +158,18 @@ class ProjectController extends Controller
      */
     public function destroy(Project $project)
     {
-        //
+        $name = $project->name;
+        // if ($project->image_path) {
+        //     Storage::disk('public')->delete(dirname($project->image_path));
+        // }
+
+        // temporary delete code to ignore for dummy project
+        if ($project->image_path && !filter_var($project->image_path, FILTER_VALIDATE_URL)) {
+            Storage::disk('public')->deleteDirectory(dirname($project->image_path));
+        }
+
+
+        $project->delete();
+        return to_route('project.index')->with('success', "Project \"$name\" is Deleted");
     }
 }
