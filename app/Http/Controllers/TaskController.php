@@ -16,9 +16,9 @@ class TaskController extends Controller
      */
     public function index()
     {
-        DB::listen(function ($query) {
-            Log::info($query->toRawSql() . " | {$query->time} ms");
-        });
+        // DB::listen(function ($query) {
+        //     Log::info($query->toRawSql() . " | {$query->time} ms");
+        // });
 
         $sortField = request("sort_field", "created_at");
         $sortDirection = request("sort_direction", "desc");

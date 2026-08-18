@@ -1,0 +1,145 @@
+import { Link, Head, useForm } from '@inertiajs/react'
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout'
+import React from 'react'
+import InputLabel from '@/Components/InputLabel'
+import TextInput from '@/Components/TextInput'
+import InputError from '@/Components/InputError'
+
+const Create = () => {
+  const { data, setData, post, errors, reset } = useForm({
+    name: '',
+    email: '',
+    password: '',
+    password_confirmation: ''
+  })
+
+  const onSubmit = (e) => {
+    e.preventDefault();
+    post(route("user.store"));
+  }
+
+  return (
+    <AuthenticatedLayout
+      header={
+        <div className="flex justify-between items-center">
+          <h2 className="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200">
+            Users
+          </h2>
+          <Link href={route('user.create')} className="bg-emerald-500 py-2 px-3 text-white rounded shadow transition-all">
+            Add new
+          </Link>
+        </div>
+      }>
+
+      <Head title="Create User" />
+
+      <div className="pt-12 pb-3">
+        <div className="mx-auto max-w-4xl sm:px-6 lg:px-8 flex justify-center">
+          <div className="overflow-hidden w-full md:w-[60vw] lg:w-[40vw] xl:w-[30vw] bg-white shadow-sm sm:rounded-lg dark:bg-gray-800">
+            <div className="p-6 text-gray-900 dark:text-gray-100 items-center">
+
+              {/* user create form */}
+              <form
+                onSubmit={onSubmit}
+                className='p-4 sm:p-8  bg-white dark:bg-gray-800 shadow sm:rounded-lg'>
+                {/* User Name  */}
+                <div className='mb-2'>
+                  <InputLabel
+                    htmlFor="user_name"
+                    value="User Name"
+                  />
+                  <TextInput
+                    id="user_name"
+                    type="text"
+                    name="name"
+                    value={data.name}
+                    className="mt-1 block w-full"
+                    isFocused={true}
+                    onChange={e => setData('name', e.target.value)}
+                  />
+                  <InputError
+                    message={errors.name}
+                    className='mt-2 text-red-500'
+                  />
+                </div>
+                {/* User Email  */}
+                <div className='mb-2'>
+                  <InputLabel
+                    htmlFor="user_email"
+                    value="User Email"
+                  />
+                  <TextInput
+                    id="user_email"
+                    type="text"
+                    name="email"
+                    value={data.email}
+                    className="mt-1 block w-full"
+                    onChange={e => setData('email', e.target.value)}
+                  />
+                  <InputError
+                    message={errors.email}
+                    className='mt-2 text-red-500'
+                  />
+                </div>
+                {/* Password  */}
+                <div className='mb-2'>
+                  <InputLabel
+                    htmlFor="user_password"
+                    value="Password"
+                  />
+                  <TextInput
+                    id="user_password"
+                    type="password"
+                    name="password"
+                    value={data.password}
+                    className="mt-1 block w-full"
+                    onChange={e => setData('password', e.target.value)}
+                  />
+                  <InputError
+                    message={errors.password}
+                    className='mt-2 text-red-500'
+                  />
+                </div>
+                {/* Password Conformation */}
+                <div className='mb-2'>
+                  <InputLabel
+                    htmlFor="user_password_confirmation"
+                    value="Confirm Password"
+                  />
+                  <TextInput
+                    id="user_password_confirmation"
+                    type="password"
+                    name="password_confirmation"
+                    value={data.password_confirmation}
+                    className="mt-1 block w-full"
+                    onChange={e => setData('password_confirmation', e.target.value)}
+                  />
+                  <InputError
+                    message={errors.password_confirmation}
+                    className='mt-2 text-red-500'
+                  />
+                </div>
+                {/* buttons */}
+                <div className='mt-4 text-right'>
+                  <Link href={route('user.index')}
+                    className='bg-gray-300 dark:bg-gray-100 py-1 px-3 text-gray-800 rounded shadow transition-all hover:bg-gray-200 mr-2'
+                  >
+                    Cancle
+                  </Link>
+                  <button className='bg-emerald-500 py-1 px-3 text-white rounded shadow transition-all hover:bg-emerald-600'>
+                    Submit
+                  </button>
+                </div>
+
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+    </AuthenticatedLayout >
+  )
+}
+
+export default Create
