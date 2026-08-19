@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdateTaskRequest extends FormRequest
 {
@@ -12,7 +13,7 @@ class UpdateTaskRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -23,7 +24,14 @@ class UpdateTaskRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            "name" => ['required', 'max:225'],
+            'image' => ['nullable', 'image', 'mimes:jpeg,jpg,png,webp', 'max:2048'],
+            'description' => ['nullable', 'string'],
+            "due_date" => ['nullable', 'date',],
+            'project_id'=> ['required', 'exists:projects,id'],
+            'assigned_user_id'=>['nullable', 'exists:users,id'],
+            'status' => ['required', Rule::in(['pending', 'in_progress', 'completed'])],
+            'priority' => ['required', Rule::in(['high', 'medium', 'low'])],
         ];
     }
 }

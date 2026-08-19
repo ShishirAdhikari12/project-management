@@ -4,6 +4,8 @@ import TextInput from "@/Components/TextInput";
 import {
   TASK_STATUS_CLASS_MAP,
   TASK_STATUS_TEXT_MAP,
+  TASK_PRIORITY_CLASS_MAP,
+  TASK_PRIORITY_TEXT_MAP,
 } from "@/constants.jsx";
 import TableHeading from '@/Components/TableHeading'
 import { Link, router } from "@inertiajs/react";
@@ -40,6 +42,12 @@ const TasksTable = ({ tasks, queryParams = null, hideProjectColumn = false }) =>
     }
     router.get(route("task.index"), queryParams);
   };
+  const deleteTask = (task) => {
+    if (!window.confirm("Are you sure you want to delete the task?")) {
+      return;
+    }
+    router.delete(route('task.destroy', task.id));
+  }
 
   return (
     <>
@@ -68,6 +76,12 @@ const TasksTable = ({ tasks, queryParams = null, hideProjectColumn = false }) =>
                 sortChanged={sortChanged}
               >Status</TableHeading>
               <TableHeading
+                name="priority"
+                sort_field={queryParams.sort_field}
+                sort_direction={queryParams.sort_direction}
+                sortChanged={sortChanged}
+              >Priority</TableHeading>
+              <TableHeading
                 name="created_at"
                 sort_field={queryParams.sort_field}
                 sort_direction={queryParams.sort_direction}
@@ -80,6 +94,7 @@ const TasksTable = ({ tasks, queryParams = null, hideProjectColumn = false }) =>
                 sortChanged={sortChanged}
               >Due Date</TableHeading>
               <th className="px-3 py-3">Created By</th>
+              <th className="px-3 py-3">Assigned To</th>
               <th className="px-3 py-3 text-right">Actions</th>
             </tr>
           </thead>
@@ -113,6 +128,21 @@ const TasksTable = ({ tasks, queryParams = null, hideProjectColumn = false }) =>
                   <option value="completed">Conpleted</option>
                 </SelectInput>
               </th>
+              <th className="px-3 py-3">
+                <SelectInput
+                  className="w-full"
+                  defaultValue={queryParams.priority}
+                  onChange={(e) =>
+                    searchFieldChanged("priority", e.target.value)
+                  }
+                >
+                  <option value="">Select Priority</option>
+                  <option value="low">Low</option>
+                  <option value="medium">Medium</option>
+                  <option value="high">High</option>
+                </SelectInput>
+              </th>
+              <th className="px-3 py-3"></th>
               <th className="px-3 py-3"></th>
               <th className="px-3 py-3"></th>
               <th className="px-3 py-3"></th>
@@ -141,9 +171,18 @@ const TasksTable = ({ tasks, queryParams = null, hideProjectColumn = false }) =>
                     href={route('project.show', task.project.id)}
                   // title={task.project.name}
                   // className="block max-w-32 truncate hover:underline hover:text-black dark:hover:text-white"
-                  >{task.project.name}</Link>
+                  >
+                    {task.project.name}
+                  </Link>
                 </td>}
-                <td className="px-3 py-2">{task.name}</td>
+                <td className="px-3 py-2">
+                  <Link
+                    href={route("task.show", task.id)}
+                    className="hover:underline hover:text-black dark:hover:text-white"
+                  >
+                    {task.name}
+                  </Link>
+                </td>
                 <td className="px-3 py-2 text-nowrap">
                   <span
                     className={
@@ -155,25 +194,36 @@ const TasksTable = ({ tasks, queryParams = null, hideProjectColumn = false }) =>
                   </span>
                 </td>
                 <td className="px-3 py-2 text-nowrap">
+                  <span
+                    className={
+                      "px-2 py-1 rounded text-white " +
+                      TASK_PRIORITY_CLASS_MAP[task.priority]
+                    }
+                  >
+                    {TASK_PRIORITY_TEXT_MAP[task.priority]}
+                  </span>
+                </td>
+                <td className="px-3 py-2 text-nowrap">
                   {task.created_at}
                 </td>
                 <td className="px-3 py-2 text-nowrap">
                   {task.due_date}
                 </td>
                 <td className="px-3 py-2">{task.createdBy.name}</td>
-                <td className="px-3 py-2">
+                <td className="px-3 py-2">{task.assignedUser.name}</td>
+                <td className="px-3 py-2 text-nowrap">
                   <Link
-                    href={route("task.destroy", task.id)}
+                    href={route("task.edit", task.id)}
                     className="font-medium text-blue-600 dark:text-blue-500 hover:underline mx-1"
                   >
                     Edit
                   </Link>
-                  <Link
-                    href={route("task.destroy", task.id)}
+                  <button
+                    onClick={(e) => deleteTask(task)}
                     className="font-medium text-red-600 dark:text-red-500 hover:underline mx-1"
                   >
                     Delete
-                  </Link>
+                  </button>
                 </td>
               </tr>
             ))}

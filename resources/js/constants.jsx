@@ -33,3 +33,13 @@ export const PROJECT_STATUS_RING_CLASS_MAP = {
   'in_progress': 'ring-4 ring-blue-300 focus:ring-4 focus:ring-blue-500',
   'completed': 'ring-4 ring-green-300 focus:ring-4 focus:ring-green-500',
 }
+export const TASK_STATUS_RING_CLASS_MAP = {
+  'pending': 'ring-4 ring-amber-300 focus:ring-4 focus:ring-amber-500',
+  'in_progress': 'ring-4 ring-blue-300 focus:ring-4 focus:ring-blue-500',
+  'completed': 'ring-4 ring-green-300 focus:ring-4 focus:ring-green-500',
+}
+export const TASK_PRIORITY_RING_CLASS_MAP = {
+  'low': 'ring-4 ring-gray-300 focus:ring-4 focus:ring-gray-500',
+  'medium': 'ring-4 ring-amber-300 focus:ring-4 focus:ring-amber-500',
+  'high': 'ring-4 ring-red-300 focus:ring-4 focus:ring-red-500',
+}

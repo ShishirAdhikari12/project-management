@@ -14,6 +14,7 @@ export default function Show({ user, tasks, queryParams }) {
     >
       <Head title={`User "${user.name}"`} />
 
+
       <div className="pt-12 pb-3">
         <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
           <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg dark:bg-gray-800">
@@ -81,8 +82,9 @@ export default function Show({ user, tasks, queryParams }) {
         </div>
       </div>
 
+
       {/* task tables */}
-      <div className="pb-12 pt-3">
+      {/* <div className="pb-12 pt-3">
         <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
           <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg dark:bg-gray-800">
             <div className="p-6 text-gray-900 dark:text-gray-100">
@@ -94,7 +96,7 @@ export default function Show({ user, tasks, queryParams }) {
             </div>
           </div>
         </div>
-      </div>
+      </div> */}
     </AuthenticatedLayout>
   );
 }

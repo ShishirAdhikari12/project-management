@@ -6,8 +6,14 @@ use App\Http\Requests\StoreTaskRequest;
 use App\Http\Requests\UpdateTaskRequest;
 use App\Models\Task;
 use App\Http\Resources\TaskResource;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
+
+use function Laravel\Prompts\table;
 
 class TaskController extends Controller
 {
@@ -38,6 +44,9 @@ class TaskController extends Controller
         if (request("status")) {
             $query->where('status', request('status'));
         }
+        if (request("priority")) {
+            $query->where('priority', request('priority'));
+        }
 
         $task = $query->orderBy($sortField, $sortDirection)
             ->paginate(20)
@@ -46,6 +55,7 @@ class TaskController extends Controller
         return inertia("Task/Index", [
             'tasks' => TaskResource::collection($task),
             'queryParams' => request()->query() ?: null,
+            'success' => session('success'),
         ]);
     }
 
@@ -54,7 +64,18 @@ class TaskController extends Controller
      */
     public function create()
     {
-        //
+        $users = DB::table('users')
+            ->select('users.id', 'users.name')
+            ->get();
+        $projects = DB::table('projects as p')
+            ->select('p.id', 'p.name')
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return inertia('Task/Create', [
+            'users' => $users,
+            'projects' => $projects,
+        ]);
     }
 
     /**
@@ -62,7 +83,21 @@ class TaskController extends Controller
      */
     public function store(StoreTaskRequest $request)
     {
-        //
+        $data = $request->validated();
+        /** @var UploadedFile|null $image */
+        $image = $data['image'] ?? null;
+
+        $data["created_by"] = Auth::id();
+        $data["updated_by"] = Auth::id();
+
+        if ($image) {
+            $data['image_path'] = $image->store('task/' . Str::random(10), 'public');
+        }
+        unset($data['image']);
+        Task::create($data);
+
+        return to_route('task.index')
+            ->with('success', 'Task was created');
     }
 
     /**
@@ -70,7 +105,22 @@ class TaskController extends Controller
      */
     public function show(Task $task)
     {
-        //
+        // DB::listen(function ($query) {
+        //     Log::info($query->toRawSql() . " | {$query->time} ms");
+        // });
+
+        $task->with([
+            'createdBy',
+            'updatedBy',
+            'assignedUser',
+            'project',
+            'project.createdBy',
+            "project.updatedBy",
+        ]);
+
+        return inertia("Task/Show", [
+            'task' => new TaskResource($task),
+        ]);
     }
 
     /**
@@ -78,7 +128,20 @@ class TaskController extends Controller
      */
     public function edit(Task $task)
     {
-        //
+        $users = DB::table('users')
+            ->select('users.id', 'users.name')
+            ->get();
+
+        $projects = DB::table('projects as p')
+            ->select('p.id', 'p.name')
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return inertia('Task/Edit', [
+            'users' => $users,
+            'projects' => $projects,
+            'task' => new TaskResource($task),
+        ]);
     }
 
     /**
@@ -86,7 +149,23 @@ class TaskController extends Controller
      */
     public function update(UpdateTaskRequest $request, Task $task)
     {
-        //
+        $data = $request->validated();
+        /** @var UploadedFile|null $image */
+        $image = $data['image'] ?? null;
+
+        if ($image instanceof UploadedFile) {
+            if ($task->image_path) {
+                Storage::disk('public')->deleteDirectory(dirname($task->image_path));
+            }
+            $data['image_path'] = $image->store('task/' . Str::random(10), 'public');
+        }
+
+        unset($data['image']);
+        $data['updated_by'] = Auth::id();
+        $task->update($data);
+
+        return to_route('task.index')
+            ->with('success', 'Task is Updated');
     }
 
     /**
@@ -94,6 +173,18 @@ class TaskController extends Controller
      */
     public function destroy(Task $task)
     {
-        //
+        $name = $task->name;
+        // if ($task->image_path) {
+        //     Storage::disk('public')->delete(dirname($task->image_path));
+        // }
+
+        // temporary delete code to ignore for dummy task
+        if ($task->image_path && !filter_var($task->image_path, FILTER_VALIDATE_URL)) {
+            Storage::disk('public')->deleteDirectory(dirname($task->image_path));
+        }
+
+
+        $task->delete();
+        return to_route('task.index')->with('success', "Task \"$name\" is Deleted");
     }
 }
