@@ -70,7 +70,7 @@ export default function Index({ projects, queryParams = null, success }) {
             Projects
           </h2>
           <Link href={route('project.create')} className="bg-emerald-500 py-2 px-3 text-white rounded shadow transition-all">
-            Add new
+            Add New Project
           </Link>
         </div>
       }

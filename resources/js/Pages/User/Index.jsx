@@ -66,7 +66,7 @@ export default function Index({ users, queryParams = null, success }) {
             Users
           </h2>
           <Link href={route('user.create')} className="bg-emerald-500 py-2 px-3 text-white rounded shadow transition-all">
-            Add new
+            Add New User
           </Link>
         </div>
       }

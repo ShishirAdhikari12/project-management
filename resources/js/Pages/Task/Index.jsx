@@ -25,7 +25,7 @@ export default function Index({ tasks, queryParams = null, success }) {
             Tasks
           </h2>
           <Link href={route('task.create')} className="bg-emerald-500 py-2 px-3 text-white rounded shadow transition-all">
-            Add new
+            Add New Task
           </Link>
         </div>
       }
