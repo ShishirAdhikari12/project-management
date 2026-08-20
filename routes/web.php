@@ -18,6 +18,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('project', ProjectController::class);
     Route::resource('task', TaskController::class);
     Route::resource('user', UserController::class);
+    Route::get('/myTasks', [TaskController::class, 'myTasks'])->name('task.myTasks');
 });
 
 Route::middleware('auth')->group(function () {

@@ -187,4 +187,47 @@ class TaskController extends Controller
         $task->delete();
         return to_route('task.index')->with('success', "Task \"$name\" is Deleted");
     }
+
+    public function myTasks()
+    {
+        // DB::listen(function ($query) {
+        //     Log::info($query->toRawSql() . " | {$query->time} ms");
+        // });
+
+        $sortField = request("sort_field", "created_at");
+        $sortDirection = request("sort_direction", "desc");
+
+        $user = Auth::id();
+
+        $query = Task::query()
+            ->where('assigned_user_id', $user)
+            ->with([
+                'createdBy',
+                'updatedBy',
+                'assignedUser',
+                'project',
+                'project.createdBy',
+                "project.updatedBy",
+            ]);
+
+        if (request("name")) {
+            $query->where('name', 'like', "%" . request('name') . "%");
+        }
+        if (request("status")) {
+            $query->where('status', request('status'));
+        }
+        if (request("priority")) {
+            $query->where('priority', request('priority'));
+        }
+
+        $task = $query->orderBy($sortField, $sortDirection)
+            ->paginate(20)
+            ->onEachSide(1);
+
+        return inertia("Task/Index", [
+            'tasks' => TaskResource::collection($task),
+            'queryParams' => request()->query() ?: null,
+            'success' => session('success'),
+        ]);
+    }
 }
