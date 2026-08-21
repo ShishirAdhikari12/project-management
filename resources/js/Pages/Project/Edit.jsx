@@ -15,7 +15,7 @@ const Edit = ({ project }) => {
     status: project.status || '',
     description: project.description || '',
     due_date: project.due_date || '',
-    _method:'PUT'
+    _method: 'PUT'
   })
 
   const onSubmit = (e) => {
@@ -32,7 +32,7 @@ const Edit = ({ project }) => {
           <h2 className="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200">
             Edit Project "{project.name}"
           </h2>
-          <Link href={route('project.create')} className="bg-emerald-500 py-2 px-3 text-white rounded shadow transition-all">
+          <Link href={route('project.create')} className="text-nowrap bg-emerald-500 py-2 px-3 text-white rounded shadow transition-all ">
             Add new
           </Link>
         </div>

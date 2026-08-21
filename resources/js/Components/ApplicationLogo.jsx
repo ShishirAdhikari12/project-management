@@ -6,7 +6,7 @@ export default function ApplicationLogo(props) {
         <img
           src="/images/light-logo.svg"
           alt="TaskFlow"
-          className="h-16 w-auto hidden dark:hidden"
+          className="h-16 w-auto dark:hidden"
         />
 
         {/* Dark theme logo */}

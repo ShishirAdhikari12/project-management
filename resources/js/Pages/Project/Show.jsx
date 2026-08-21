@@ -11,7 +11,7 @@ export default function Show({ project, tasks, queryParams }) {
           <h2 className="text-xl flex justify-between font-semibold leading-tight text-gray-800 dark:text-gray-200">
             {`Project "${project.name}"`}
           </h2>
-          <Link href={route("project.edit", project.id)} className="bg-emerald-500 py-2 px-3 text-white rounded shadow transition-all">
+          <Link href={route("project.edit", project.id)} className="text-nowrap bg-emerald-500 py-2 px-3 text-white rounded shadow transition-all">
             Edit Project
           </Link>
         </div>

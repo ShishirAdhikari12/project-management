@@ -11,7 +11,7 @@ export default function Show({ task }) {
           <h2 className="text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200">
             {`Task "${task.name}"`}
           </h2>
-          <Link href={route("task.edit", task.id)} className="bg-emerald-500 py-2 px-3 text-white rounded shadow transition-all">
+          <Link href={route("task.edit", task.id)} className="text-nowrap bg-emerald-500 py-2 px-3 text-white rounded shadow transition-all">
             Edit Task
           </Link>
         </div>
