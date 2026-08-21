@@ -23,7 +23,7 @@ export default function AuthenticatedLayout({ header, children }) {
                 </Link>
               </div>
 
-              <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+              <div className="hidden space-x-8 md:-my-px md:ms-10 md:flex">
                 <NavLink
                   href={route('dashboard')}
                   active={route().current('dashboard')}
@@ -32,7 +32,7 @@ export default function AuthenticatedLayout({ header, children }) {
                 </NavLink>
               </div>
 
-              <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+              <div className="hidden space-x-8 md:-my-px md:ms-10 md:flex">
                 <NavLink
                   href={route('project.index')}
                   active={route().current('project.index')}
@@ -41,7 +41,7 @@ export default function AuthenticatedLayout({ header, children }) {
                 </NavLink>
               </div>
 
-              <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+              <div className="hidden space-x-8 md:-my-px md:ms-10 md:flex">
                 <NavLink
                   href={route('task.index')}
                   active={route().current('task.index')}
@@ -50,7 +50,7 @@ export default function AuthenticatedLayout({ header, children }) {
                 </NavLink>
               </div>
 
-              <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+              <div className="hidden space-x-8 md:-my-px md:ms-10 md:flex">
                 <NavLink
                   href={route('user.index')}
                   active={route().current('user.index')}
@@ -58,7 +58,7 @@ export default function AuthenticatedLayout({ header, children }) {
                   Users
                 </NavLink>
               </div>
-              <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+              <div className="hidden space-x-8 md:-my-px md:ms-10 md:flex">
                 <NavLink
                   href={route('task.myTasks')}
                   active={route().current('task.myTasks')}
@@ -68,7 +68,7 @@ export default function AuthenticatedLayout({ header, children }) {
               </div>
             </div>
 
-            <div className="hidden sm:ms-6 sm:flex sm:items-center">
+            <div className="hidden md:ms-6 md:flex md:items-center">
               <div className="relative ms-3">
                 <Dropdown>
                   <Dropdown.Trigger>
@@ -113,7 +113,7 @@ export default function AuthenticatedLayout({ header, children }) {
               </div>
             </div>
 
-            <div className="-me-2 flex items-center sm:hidden">
+            <div className="-me-2 flex items-center md:hidden">
               <button
                 onClick={() =>
                   setShowingNavigationDropdown(
@@ -168,6 +168,38 @@ export default function AuthenticatedLayout({ header, children }) {
               active={route().current('dashboard')}
             >
               Dashboard
+            </ResponsiveNavLink>
+          </div>
+          <div className="space-y-1 pb-3 pt-2">
+            <ResponsiveNavLink
+              href={route('project.index')}
+              active={route().current('project.index')}
+            >
+              Projects
+            </ResponsiveNavLink>
+          </div>
+          <div className="space-y-1 pb-3 pt-2">
+            <ResponsiveNavLink
+              href={route('task.index')}
+              active={route().current('task.index')}
+            >
+              All Tasks
+            </ResponsiveNavLink>
+          </div>
+          <div className="space-y-1 pb-3 pt-2">
+            <ResponsiveNavLink
+              href={route('user.index')}
+              active={route().current('user.index')}
+            >
+              Users
+            </ResponsiveNavLink>
+          </div>
+          <div className="space-y-1 pb-3 pt-2">
+            <ResponsiveNavLink
+              href={route('task.myTasks')}
+              active={route().current('task.myTasks')}
+            >
+              My Tasks
             </ResponsiveNavLink>
           </div>
 
